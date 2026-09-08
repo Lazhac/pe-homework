@@ -5,14 +5,12 @@ jupytext:
   text_representation:
     extension: .md
     format_name: myst
+    format_version: 0.13
+    jupytext_version: 1.19.5
 kernelspec:
   display_name: Python 3 (ipykernel)
   language: python
   name: python3
-language_info:
-  name: python
-  pygments_lexer: ipython3
-  nbconvert_exporter: python
 ---
 
 # indexation et *slicing*
@@ -224,8 +222,6 @@ tab
 ```
 
 ```{code-cell} ipython3
-:lines_to_next_cell: 2
-
 [tab.shape[i] for i in range(tab.ndim)]
 ```
 
@@ -751,7 +747,18 @@ M
 
 Écrivez une fonction `zebre`, qui prend en argument un entier *n* et qui fabrique un tableau carré de coté `n`, formé d'une alternance de colonnes de 0 et de colonnes de 1.
 
-+++
+```{code-cell} ipython3
+n = 4
+A = np.zeros(n*n, dtype=int)
+B = np.ones(n*n, dtype=int)
+
+A.resize(n,n)
+B.resize(n,n)
+
+A[:, 1::2] = B[:, 1::2]
+
+print(A)
+```
 
 par exemple pour `n=4` on s'attend à ceci
 
@@ -791,7 +798,15 @@ array([[0, 1, 0, 1, 0],
 # a vous de jouer
 
 def checkers(n, up_left=True):
-    pass
+    A = np.zeros(n*n, dtype=int)
+    B = np.ones(n*n, dtype=int)
+    
+    A.resize(n,n)
+    B.resize(n,n)
+    
+    A[up_left::2, 1::2] = B[up_left::2, 1::2]
+    A[(1-up_left)::2, ::2] = B[(1-up_left)::2, ::2]
+    return A
 ```
 
 ```{code-cell} ipython3
@@ -843,8 +858,14 @@ array([[0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1],
 
 #  vous de jouer
 
+def block_checkers_classique(n, k):
+    return [[int(((j // k)%2) != ((i // k)%2)) for j in range(n*k)] for i in range(n*k)]
+
 def block_checkers(n, k):
-    pass
+     I, J = np.indices((n*k, n*k))
+     I2 = (I // k) % 2
+     J2 = (J // k) % 2
+     return (I2 != J2) + 0
 ```
 
 ```{code-cell} ipython3
@@ -893,7 +914,12 @@ array([[0, 1, 2, 3, 4, 3, 2, 1, 0],
 # à vous de jouer
 
 def stairs(n):
-    pass
+    I, J = np.indices((2*n+1, 2*n+1))
+    M1 = I + J
+    M2 = I[::-1, :] + J
+    M3 = I + J[:, ::-1]
+    M4 = I[::-1, :] + J[:, ::-1]
+    return np.minimum(np.minimum(np.minimum(M1, M2), M3), M4)
 ```
 
 ```{code-cell} ipython3
